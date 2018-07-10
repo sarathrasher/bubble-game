@@ -1,6 +1,6 @@
 import pygame, sys
 from pygame.locals import *
-from random import randint
+import random
 
 WHITE = (255, 255, 255)
 
@@ -13,6 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.change_y = 0
         self.rect.x = x
         self.rect.y = y
+        self.score = 0
 
     def handle_input(self, event):
         if event.type == pygame.KEYDOWN:
@@ -52,6 +53,23 @@ class Player(pygame.sprite.Sprite):
         elif self.rect.bottom >= game.height:
             self.rect.bottom = game.height
 
+    def check_collision(self, group):
+        collide = pygame.sprite.spritecollide(self, group, True)
+        if len(collide) != 0:
+            self.score += 1
+            print self.score
+
+    def add_score(self):
+        score += 1
+
+class Point(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super(Point, self).__init__()
+        self.image = pygame.image.load('green.png').convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
 class Run_game(object):
     def main(self):
         # declare the size of the canvas
@@ -64,8 +82,11 @@ class Run_game(object):
 
         # Initialize game
         self.player = Player(50, 50)
+        self.point = Point(random.randint(0, game.width), random.randint(0, game.height))
+        player_group = pygame.sprite.Group()
+        player_group.add(self.player)
         all_sprites_list = pygame.sprite.Group()
-        all_sprites_list.add(self.player)
+        all_sprites_list.add(self.point)
         clock = pygame.time.Clock()
         done = False
 
@@ -81,11 +102,15 @@ class Run_game(object):
                     self.player.handle_input(event)
 
             #Game display
+            player_group.update()
             all_sprites_list.update()
+            self.player.check_collision(all_sprites_list)
             screen.fill(WHITE)
+            player_group.draw(screen)
             all_sprites_list.draw(screen)
             pygame.display.update()
             clock.tick(60)
+        
     pygame.quit()
 
 game = Run_game()
