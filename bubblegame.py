@@ -4,12 +4,10 @@ from random import randint
 
 clock = pygame.time.Clock()
 
-KEY_UP = 273
-KEY_DOWN = 274
-KEY_LEFT = 276
-KEY_RIGHT = 275
-
 WHITE = (255, 255, 255)
+
+width = 800
+height = 600
 
 # class Bubble(pygame.sprite.Sprite):
 #     def __init__(self, x, y):
@@ -36,14 +34,24 @@ class Player(pygame.sprite.Sprite):
         self.change_y = 0
         self.image = pygame.image.load('yellow.png').convert_alpha()
         self.rect = self.image.get_rect()
-
+        
     def change_speed(self, x, y):
         self.change_x += x
         self.change_y += y
-
+       
     def update(self):
         self.rect.x += self.change_x
         self.rect.y += self.change_y
+
+        #Check collision with wall
+        if self.rect.left <= 0:
+            self.rect.left = 0
+        elif self.rect.right >= width:
+            self.rect.right = width
+        if self.rect.top <= 0:
+            self.rect.top = 0
+        elif self.rect.bottom >= height:
+            self.rect.bottom = height
 
     def earn_point(self):
         # if player hits up_point, add point
@@ -92,7 +100,7 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     player.change_speed(-3, 0)
                 elif event.key == pygame.K_RIGHT:
@@ -107,9 +115,9 @@ def main():
                 elif event.key == pygame.K_RIGHT:
                     player.change_speed(-3, 0)
                 elif event.key == pygame.K_UP:
-                    player.change_speed(0, -3)
-                elif event.key == pygame.K_DOWN:
                     player.change_speed(0, 3)
+                elif event.key == pygame.K_DOWN:
+                    player.change_speed(0, -3)
 
         #Game Logic
             #start with just player bubble
