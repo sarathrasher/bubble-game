@@ -127,7 +127,10 @@ class Run_game(object):
                 self.attack = Attack()
                 all_sprites_list.add(self.attack)
                 self.player.attack_bubbles.add(self.attack)
-      
+                  
+            if self.player.score < 0:
+                return False
+
             #Event Handling
             for event in pygame.event.get():
                 if event.type == QUIT:
