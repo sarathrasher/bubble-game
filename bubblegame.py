@@ -106,6 +106,23 @@ def draw_text(screen, text, size, x, y):
     text_rect.midtop = (x, y)
     screen.blit(text_surface, text_rect)
 
+def show_title_screen():
+    WHITE = (255, 255, 255)
+    screen = game.screen
+    width = game.width
+    height = game.height
+    screen.fill(WHITE)
+    draw_text(screen, "BUBBLEMANIA", 70, width / 2, height / 4)
+    draw_text(screen, "Collect the green bubbles while avoiding red bubbles.", 30, width / 2, height / 3)
+    draw_text(screen, "Press any key to begin.", 30, width / 2, height / 2)
+    pygame.display.update()
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYUP:
+                waiting = False
 
 
 class Run_game(object):
@@ -116,7 +133,7 @@ class Run_game(object):
         WHITE = (255, 255, 255)
         display_color = WHITE
         pygame.init()
-        screen = pygame.display.set_mode((self.width, self.height))
+        self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Bubblemania')
 
         # Initialize game
@@ -128,9 +145,13 @@ class Run_game(object):
         self.player.attack_bubbles = pygame.sprite.Group()
         clock = pygame.time.Clock()
         done = False
+        game_over = True
 
         while True:
             # Main game loop
+            if game_over:
+                show_title_screen()
+                game_over = False
             while len(self.player.points) <= 3:
                 self.point = Point()
                 all_sprites_list.add(self.point)
@@ -139,9 +160,9 @@ class Run_game(object):
                 self.attack = Attack()
                 all_sprites_list.add(self.attack)
                 self.player.attack_bubbles.add(self.attack)
-                  
-            if self.player.score < 0:
-                return False
+                
+                if self.player.score < 0:
+                    game_over = True
 
             #Event Handling
             for event in pygame.event.get():
@@ -156,10 +177,10 @@ class Run_game(object):
             all_sprites_list.update()
             self.player.check_collision(self.player.points)
             self.player.check_collision(self.player.attack_bubbles)
-            screen.fill(WHITE)
-            player_group.draw(screen)
-            all_sprites_list.draw(screen)
-            draw_text(screen, "Current score is %d" % self.player.score, 18, self.width / 2, 10)
+            self.screen.fill(WHITE)
+            player_group.draw(self.screen)
+            all_sprites_list.draw(self.screen)
+            draw_text(self.screen, "Current score is %d" % self.player.score, 18, self.width / 2, 10)
             pygame.display.update()
             clock.tick(60)
         
