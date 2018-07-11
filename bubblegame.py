@@ -57,6 +57,7 @@ class Player(pygame.sprite.Sprite):
         if len(collide) != 0:
             self.score += 1
             print self.score
+            
 
     def add_score(self):
         self.score += 1
@@ -68,6 +69,27 @@ class Point(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, game.width)
         self.rect.y = random.randint(0, game.height)
+
+class Attack(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Attack, self).__init__()
+        self.image = pygame.image.load('red.png').convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(0, game.width)
+        self.rect.y = random.randint(0, game.height)
+        self.speed_x = random.randint(3, 5)
+        self.speed_y = random.randint(3, 5)
+    
+    def update(self):
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
+
+        #Check collision with wall
+        if self.rect.left <= 0 or self.rect.right >= game.width:
+            self.speed_x = -self.speed_x
+        if self.rect.top <= 0 or self.rect.bottom >= game.height:
+            self.speed_y = -self.speed_y
+        
 
 class Run_game(object):
     def main(self):
@@ -86,7 +108,7 @@ class Run_game(object):
         player_group.add(self.player)
         all_sprites_list = pygame.sprite.Group()
         points = pygame.sprite.Group()
-
+        attack_bubbles = pygame.sprite.Group()
         clock = pygame.time.Clock()
         done = False
 
@@ -96,6 +118,10 @@ class Run_game(object):
                 self.point = Point()
                 all_sprites_list.add(self.point)
                 points.add(self.point)
+            while len(attack_bubbles) <= 2:
+                self.attack = Attack()
+                all_sprites_list.add(self.attack)
+                attack_bubbles.add(self.attack)
 
             #Event Handling
             for event in pygame.event.get():
@@ -108,7 +134,8 @@ class Run_game(object):
             #Game display
             player_group.update()
             all_sprites_list.update()
-            self.player.check_collision(all_sprites_list)
+            self.player.check_collision(points)
+            self.player.check_collision(attack_bubbles)
             screen.fill(WHITE)
             player_group.draw(screen)
             all_sprites_list.draw(screen)
