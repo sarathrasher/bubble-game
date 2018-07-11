@@ -13,6 +13,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.score = 0
+        self.points = ()
+        self.attack_bubbles = ()
 
     def handle_input(self, event):
         if event.type == pygame.KEYDOWN:
@@ -55,7 +57,10 @@ class Player(pygame.sprite.Sprite):
     def check_collision(self, group):
         collide = pygame.sprite.spritecollide(self, group, True)
         if len(collide) != 0:
-            self.score += 1
+            if group == self.points:
+                self.score += 1
+            elif group == self.attack_bubbles:
+                self.score -= 1
             print self.score
             
 
@@ -107,22 +112,22 @@ class Run_game(object):
         player_group = pygame.sprite.Group()
         player_group.add(self.player)
         all_sprites_list = pygame.sprite.Group()
-        points = pygame.sprite.Group()
-        attack_bubbles = pygame.sprite.Group()
+        self.player.points = pygame.sprite.Group()
+        self.player.attack_bubbles = pygame.sprite.Group()
         clock = pygame.time.Clock()
         done = False
 
         while True:
             # Main game loop
-            while len(points) <= 3:
+            while len(self.player.points) <= 3:
                 self.point = Point()
                 all_sprites_list.add(self.point)
-                points.add(self.point)
-            while len(attack_bubbles) <= 2:
+                self.player.points.add(self.point)
+            while len(self.player.attack_bubbles) <= 2:
                 self.attack = Attack()
                 all_sprites_list.add(self.attack)
-                attack_bubbles.add(self.attack)
-
+                self.player.attack_bubbles.add(self.attack)
+      
             #Event Handling
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -134,8 +139,8 @@ class Run_game(object):
             #Game display
             player_group.update()
             all_sprites_list.update()
-            self.player.check_collision(points)
-            self.player.check_collision(attack_bubbles)
+            self.player.check_collision(self.player.points)
+            self.player.check_collision(self.player.attack_bubbles)
             screen.fill(WHITE)
             player_group.draw(screen)
             all_sprites_list.draw(screen)
