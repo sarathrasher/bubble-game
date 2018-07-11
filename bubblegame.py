@@ -97,6 +97,17 @@ class Attack(pygame.sprite.Sprite):
         if (self.rect.top + self.speed_y) <= 0 or (self.rect.bottom + self.speed_y) >= game.height:
             self.speed_y = -self.speed_y
 
+def draw_text(screen, text, size, x, y):
+    font_name = pygame.font.match_font("arial")
+    BLACK = (0, 0, 0)
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, BLACK)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    screen.blit(text_surface, text_rect)
+
+
+
 class Run_game(object):
     def main(self):
         # declare the size of the canvas
@@ -148,6 +159,7 @@ class Run_game(object):
             screen.fill(WHITE)
             player_group.draw(screen)
             all_sprites_list.draw(screen)
+            draw_text(screen, "Current score is %d" % self.player.score, 18, self.width / 2, 10)
             pygame.display.update()
             clock.tick(60)
         
