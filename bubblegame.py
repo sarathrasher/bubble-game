@@ -58,14 +58,16 @@ class Player(pygame.sprite.Sprite):
         collide = pygame.sprite.spritecollide(self, group, True)
         if len(collide) != 0:
             if group == self.points:
-                self.score += 1
+                self.add_score()
             elif group == self.attack_bubbles:
-                self.score -= 1
+                self.subtract_score()
             print self.score
-            
 
     def add_score(self):
         self.score += 1
+    
+    def subtract_score(self):
+        self.score -= 1
 
 class Point(pygame.sprite.Sprite):
     def __init__(self):
