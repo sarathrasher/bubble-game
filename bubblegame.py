@@ -2,7 +2,6 @@ import pygame, sys
 from pygame.locals import *
 import random
 
-WHITE = (255, 255, 255)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -60,21 +59,22 @@ class Player(pygame.sprite.Sprite):
             print self.score
 
     def add_score(self):
-        score += 1
+        self.score += 1
 
 class Point(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self):
         super(Point, self).__init__()
         self.image = pygame.image.load('green.png').convert_alpha()
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.x = random.randint(0, game.width)
+        self.rect.y = random.randint(0, game.height)
 
 class Run_game(object):
     def main(self):
         # declare the size of the canvas
         self.width = 800
         self.height = 600
+        WHITE = (255, 255, 255)
         display_color = WHITE
         pygame.init()
         screen = pygame.display.set_mode((self.width, self.height))
@@ -82,16 +82,20 @@ class Run_game(object):
 
         # Initialize game
         self.player = Player(50, 50)
-        self.point = Point(random.randint(0, game.width), random.randint(0, game.height))
         player_group = pygame.sprite.Group()
         player_group.add(self.player)
         all_sprites_list = pygame.sprite.Group()
-        all_sprites_list.add(self.point)
+        points = pygame.sprite.Group()
+
         clock = pygame.time.Clock()
         done = False
 
         while True:
             # Main game loop
+            while len(points) <= 3:
+                self.point = Point()
+                all_sprites_list.add(self.point)
+                points.add(self.point)
 
             #Event Handling
             for event in pygame.event.get():
