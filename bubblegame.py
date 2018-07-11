@@ -74,16 +74,16 @@ class Point(pygame.sprite.Sprite):
         super(Point, self).__init__()
         self.image = pygame.image.load('green.png').convert_alpha()
         self.rect = self.image.get_rect()
-        self.rect.x = random.randint(0, game.width)
-        self.rect.y = random.randint(0, game.height)
+        self.rect.x = random.randint((0 + self.rect.width), (game.width - self.rect.width))
+        self.rect.y = random.randint((0 + self.rect.height), (game.height - self.rect.height))
 
 class Attack(pygame.sprite.Sprite):
     def __init__(self):
         super(Attack, self).__init__()
         self.image = pygame.image.load('red.png').convert_alpha()
         self.rect = self.image.get_rect()
-        self.rect.x = random.randint(0, game.width)
-        self.rect.y = random.randint(0, game.height)
+        self.rect.x = random.randint((0 + self.rect.width), (game.width - (self.rect.width)))
+        self.rect.y = random.randint((0 + self.rect.height), (game.height - self.rect.height))
         self.speed_x = random.randint(3, 5)
         self.speed_y = random.randint(3, 5)
     
@@ -92,11 +92,10 @@ class Attack(pygame.sprite.Sprite):
         self.rect.y += self.speed_y
 
         #Check collision with wall
-        if self.rect.left <= 0 or self.rect.right >= game.width:
+        if (self.rect.left + self.speed_x) <= 0 or (self.rect.right + self.speed_x) >= game.width:
             self.speed_x = -self.speed_x
-        if self.rect.top <= 0 or self.rect.bottom >= game.height:
+        if (self.rect.top + self.speed_y) <= 0 or (self.rect.bottom + self.speed_y) >= game.height:
             self.speed_y = -self.speed_y
-        
 
 class Run_game(object):
     def main(self):
